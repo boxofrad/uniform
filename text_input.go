@@ -31,33 +31,28 @@ func (t TextInput) String() (string, error) {
 	attrs := make(attributes, 0)
 	attrs.add("type", "text")
 
-	attrs.addString("value", t.Value)
-	attrs.addString("placeholder", t.Placeholder)
-	attrs.addString("id", t.Id)
-	attrs.addString("name", t.Name)
-	attrs.addString("dir", string(t.Dir))
-	attrs.addString("autocomplete", string(t.AutoComplete))
+	attrs.putString("value", t.Value)
+	attrs.putString("placeholder", t.Placeholder)
+	attrs.putString("id", t.Id)
+	attrs.putString("name", t.Name)
+	attrs.putString("dir", string(t.Dir))
+	attrs.putString("autocomplete", string(t.AutoComplete))
+	attrs.putString("class", strings.Join(t.Class, " "))
 
-	attrs.addBoolean("disabled", t.Disabled)
-	attrs.addBoolean("readonly", t.ReadOnly)
-	attrs.addBoolean("required", t.Required)
-	attrs.addBoolean("autofocus", t.AutoFocus)
-
-	if len(t.Class) != 0 {
-		attrs.add("class", strings.Join(t.Class, " "))
-	}
+	attrs.putBool("disabled", t.Disabled)
+	attrs.putBool("readonly", t.ReadOnly)
+	attrs.putBool("required", t.Required)
+	attrs.putBool("autofocus", t.AutoFocus)
 
 	if t.MaxLength != 0 {
-		attrs.addInt("maxlength", t.MaxLength)
+		attrs.putInt("maxlength", t.MaxLength)
 	}
 
 	if t.Size != 0 {
-		attrs.addInt("size", t.Size)
+		attrs.putInt("size", t.Size)
 	}
 
-	for key, value := range t.Data {
-		attrs.addString("data-"+key, value)
-	}
+	attrs.putData(t.Data)
 
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "input"},

@@ -4,11 +4,22 @@ import (
 	"bytes"
 	"encoding/xml"
 	"html/template"
+	"strings"
 )
 
 type SelectChild interface{}
 
 type Select struct {
+	Id        string
+	Name      string
+	Disabled  bool
+	Required  bool
+	AutoFocus bool
+	Class     []string
+	Size      int
+	Data      map[string]string
+	Dir       Dir
+
 	Options []SelectChild
 }
 
@@ -29,8 +40,25 @@ func (s Select) String() (string, error) {
 	buffer := bytes.NewBuffer(nil)
 	encoder := errEncoder{encoder: xml.NewEncoder(buffer)}
 
+	attrs := make(attributes, 0)
+	attrs.putString("id", s.Id)
+	attrs.putString("name", s.Name)
+	attrs.putString("dir", string(s.Dir))
+	attrs.putString("class", strings.Join(s.Class, " "))
+
+	attrs.putBool("disabled", s.Disabled)
+	attrs.putBool("required", s.Required)
+	attrs.putBool("autofocus", s.AutoFocus)
+
+	if s.Size != 0 {
+		attrs.putInt("size", s.Size)
+	}
+
+	attrs.putData(s.Data)
+
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "select"},
+		Attr: attrs.xmlAttr(),
 	})
 
 	for _, child := range s.Options {
@@ -58,13 +86,13 @@ func (t Select) HTML() (template.HTML, error) {
 }
 
 func encodeOptGroup(encoder errEncoder, optGroup OptGroup) {
-	optGroupAttrs := make(attributes, 0)
-	optGroupAttrs.addString("label", optGroup.Label)
-	optGroupAttrs.addBoolean("disabled", optGroup.Disabled)
+	attrs := make(attributes, 0)
+	attrs.putString("label", optGroup.Label)
+	attrs.putBool("disabled", optGroup.Disabled)
 
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "optgroup"},
-		Attr: optGroupAttrs.xmlAttr(),
+		Attr: attrs.xmlAttr(),
 	})
 
 	for _, option := range optGroup.Options {
@@ -75,14 +103,14 @@ func encodeOptGroup(encoder errEncoder, optGroup OptGroup) {
 }
 
 func encodeOption(encoder errEncoder, option Option) {
-	optionAttrs := make(attributes, 0)
-	optionAttrs.addString("value", option.Value)
-	optionAttrs.addBoolean("selected", option.Selected)
-	optionAttrs.addBoolean("disabled", option.Disabled)
+	attrs := make(attributes, 0)
+	attrs.putString("value", option.Value)
+	attrs.putBool("selected", option.Selected)
+	attrs.putBool("disabled", option.Disabled)
 
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "option"},
-		Attr: optionAttrs.xmlAttr(),
+		Attr: attrs.xmlAttr(),
 	})
 
 	if option.Text != "" {

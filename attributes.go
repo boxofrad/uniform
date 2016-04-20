@@ -15,20 +15,26 @@ func (a *attributes) add(name, value string) {
 	*a = append(*a, attribute{name, value})
 }
 
-func (a *attributes) addBoolean(name string, value bool) {
+func (a *attributes) putBool(name string, value bool) {
 	if value {
 		a.add(name, name)
 	}
 }
 
-func (a *attributes) addString(name, value string) {
+func (a *attributes) putString(name, value string) {
 	if value != "" {
 		a.add(name, value)
 	}
 }
 
-func (a *attributes) addInt(name string, value int) {
+func (a *attributes) putInt(name string, value int) {
 	a.add(name, fmt.Sprintf("%d", value))
+}
+
+func (a *attributes) putData(data map[string]string) {
+	for key, value := range data {
+		a.putString("data-"+key, value)
+	}
 }
 
 func (a attributes) xmlAttr() []xml.Attr {

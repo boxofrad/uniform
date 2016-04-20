@@ -12,6 +12,50 @@ func TestSelect(t *testing.T) {
 			`<select></select>`,
 		},
 		{
+			Select{Name: "fruit"},
+			`<select name="fruit"></select>`,
+		},
+		{
+			Select{Id: "fruit"},
+			`<select id="fruit"></select>`,
+		},
+		{
+			Select{Disabled: true},
+			`<select disabled="disabled"></select>`,
+		},
+		{
+			Select{Required: true},
+			`<select required="required"></select>`,
+		},
+		{
+			Select{AutoFocus: true},
+			`<select autofocus="autofocus"></select>`,
+		},
+		{
+			Select{Class: []string{"form-input", "form-input-select"}},
+			`<select class="form-input form-input-select"></select>`,
+		},
+		{
+			Select{Size: 10},
+			`<select size="10"></select>`,
+		},
+		{
+			Select{Data: map[string]string{"user-id": "123"}},
+			`<select data-user-id="123"></select>`,
+		},
+		{
+			Select{Data: map[string]string{"empty": ""}},
+			`<select></select>`,
+		},
+		{
+			Select{Dir: LTR},
+			`<select dir="ltr"></select>`,
+		},
+		{
+			Select{Dir: RTL},
+			`<select dir="rtl"></select>`,
+		},
+		{
 			Select{
 				Options: []SelectChild{
 					Option{
