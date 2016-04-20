@@ -19,7 +19,7 @@ type TextInput struct {
 	AutoFocus    bool
 	MaxLength    int
 	Size         int
-	Data         map[string]string
+	Attributes   map[string]string
 	Dir          Dir
 	AutoComplete OnOff
 }
@@ -52,7 +52,7 @@ func (t TextInput) String() (string, error) {
 		attrs.putInt("size", t.Size)
 	}
 
-	attrs.putData(t.Data)
+	attrs.putAttributes(t.Attributes)
 
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "input"},

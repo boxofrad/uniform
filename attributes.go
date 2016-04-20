@@ -31,9 +31,9 @@ func (a *attributes) putInt(name string, value int) {
 	a.add(name, fmt.Sprintf("%d", value))
 }
 
-func (a *attributes) putData(data map[string]string) {
+func (a *attributes) putAttributes(data map[string]string) {
 	for key, value := range data {
-		a.putString("data-"+key, value)
+		a.putString(key, value)
 	}
 }
 

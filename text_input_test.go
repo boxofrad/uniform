@@ -60,11 +60,11 @@ func TestTextInput(t *testing.T) {
 			`<input type="text" size="10">`,
 		},
 		{
-			TextInput{Data: map[string]string{"user-id": "123"}},
+			TextInput{Attributes: map[string]string{"data-user-id": "123"}},
 			`<input type="text" data-user-id="123">`,
 		},
 		{
-			TextInput{Data: map[string]string{"empty": ""}},
+			TextInput{Attributes: map[string]string{"empty": ""}},
 			`<input type="text">`,
 		},
 		{

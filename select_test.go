@@ -40,11 +40,11 @@ func TestSelect(t *testing.T) {
 			`<select size="10"></select>`,
 		},
 		{
-			Select{Data: map[string]string{"user-id": "123"}},
+			Select{Attributes: map[string]string{"data-user-id": "123"}},
 			`<select data-user-id="123"></select>`,
 		},
 		{
-			Select{Data: map[string]string{"empty": ""}},
+			Select{Attributes: map[string]string{"empty": ""}},
 			`<select></select>`,
 		},
 		{

@@ -10,15 +10,15 @@ import (
 type SelectChild interface{}
 
 type Select struct {
-	Id        string
-	Name      string
-	Disabled  bool
-	Required  bool
-	AutoFocus bool
-	Class     []string
-	Size      int
-	Data      map[string]string
-	Dir       Dir
+	Id         string
+	Name       string
+	Disabled   bool
+	Required   bool
+	AutoFocus  bool
+	Class      []string
+	Size       int
+	Attributes map[string]string
+	Dir        Dir
 
 	Options []SelectChild
 }
@@ -54,7 +54,7 @@ func (s Select) String() (string, error) {
 		attrs.putInt("size", s.Size)
 	}
 
-	attrs.putData(s.Data)
+	attrs.putAttributes(s.Attributes)
 
 	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "select"},
