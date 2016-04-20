@@ -35,22 +35,7 @@ func (s Select) String() (string, error) {
 	for _, child := range s.Options {
 		switch child.(type) {
 		case OptGroup:
-			optGroup := child.(OptGroup)
-
-			optGroupAttrs := make(attributes, 0)
-			optGroupAttrs.addString("label", optGroup.Label)
-			optGroupAttrs.addBoolean("disabled", optGroup.Disabled)
-
-			encoder.encodeToken(xml.StartElement{
-				Name: xml.Name{Local: "optgroup"},
-				Attr: optGroupAttrs.xmlAttr(),
-			})
-
-			for _, option := range optGroup.Options {
-				encodeOption(encoder, option)
-			}
-
-			encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "optgroup"}})
+			encodeOptGroup(encoder, child.(OptGroup))
 		case Option:
 			encodeOption(encoder, child.(Option))
 		}
@@ -64,6 +49,23 @@ func (s Select) String() (string, error) {
 	}
 
 	return buffer.String(), nil
+}
+
+func encodeOptGroup(encoder errEncoder, optGroup OptGroup) {
+	optGroupAttrs := make(attributes, 0)
+	optGroupAttrs.addString("label", optGroup.Label)
+	optGroupAttrs.addBoolean("disabled", optGroup.Disabled)
+
+	encoder.encodeToken(xml.StartElement{
+		Name: xml.Name{Local: "optgroup"},
+		Attr: optGroupAttrs.xmlAttr(),
+	})
+
+	for _, option := range optGroup.Options {
+		encodeOption(encoder, option)
+	}
+
+	encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "optgroup"}})
 }
 
 func encodeOption(encoder errEncoder, option Option) {
