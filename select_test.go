@@ -13,14 +13,14 @@ func TestSelect(t *testing.T) {
 		},
 		{
 			Select{
-				Options: []Option{
-					{
+				Options: []SelectChild{
+					Option{
 						Value:    "banana",
 						Text:     "Banana",
 						Selected: true,
 					},
 
-					{
+					Option{
 						Value:    "orange",
 						Text:     "Orange",
 						Disabled: true,
@@ -28,6 +28,25 @@ func TestSelect(t *testing.T) {
 				},
 			},
 			`<select><option value="banana" selected="selected">Banana</option><option value="orange" disabled="disabled">Orange</option></select>`,
+		},
+		{
+			Select{
+				Options: []SelectChild{
+					OptGroup{
+						Label:    "Yellow Fruits",
+						Disabled: true,
+						Options: []Option{
+							Option{
+								Value:    "banana",
+								Text:     "Banana",
+								Selected: true,
+								Disabled: true,
+							},
+						},
+					},
+				},
+			},
+			`<select><optgroup label="Yellow Fruits" disabled="disabled"><option value="banana" selected="selected" disabled="disabled">Banana</option></optgroup></select>`,
 		},
 	}
 

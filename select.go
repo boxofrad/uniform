@@ -5,8 +5,16 @@ import (
 	"encoding/xml"
 )
 
+type SelectChild interface{}
+
 type Select struct {
-	Options []Option
+	Options []SelectChild
+}
+
+type OptGroup struct {
+	Label    string
+	Disabled bool
+	Options  []Option
 }
 
 type Option struct {
@@ -24,22 +32,28 @@ func (s Select) String() (string, error) {
 		Name: xml.Name{Local: "select"},
 	})
 
-	for _, option := range s.Options {
-		optionAttrs := make(attributes, 0)
-		optionAttrs.addString("value", option.Value)
-		optionAttrs.addBoolean("selected", option.Selected)
-		optionAttrs.addBoolean("disabled", option.Disabled)
+	for _, child := range s.Options {
+		switch child.(type) {
+		case OptGroup:
+			optGroup := child.(OptGroup)
 
-		encoder.encodeToken(xml.StartElement{
-			Name: xml.Name{Local: "option"},
-			Attr: optionAttrs.xmlAttr(),
-		})
+			optGroupAttrs := make(attributes, 0)
+			optGroupAttrs.addString("label", optGroup.Label)
+			optGroupAttrs.addBoolean("disabled", optGroup.Disabled)
 
-		if option.Text != "" {
-			encoder.encodeToken(xml.CharData(option.Text))
+			encoder.encodeToken(xml.StartElement{
+				Name: xml.Name{Local: "optgroup"},
+				Attr: optGroupAttrs.xmlAttr(),
+			})
+
+			for _, option := range optGroup.Options {
+				encodeOption(encoder, option)
+			}
+
+			encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "optgroup"}})
+		case Option:
+			encodeOption(encoder, child.(Option))
 		}
-
-		encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "option"}})
 	}
 
 	encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "select"}})
@@ -50,4 +64,22 @@ func (s Select) String() (string, error) {
 	}
 
 	return buffer.String(), nil
+}
+
+func encodeOption(encoder errEncoder, option Option) {
+	optionAttrs := make(attributes, 0)
+	optionAttrs.addString("value", option.Value)
+	optionAttrs.addBoolean("selected", option.Selected)
+	optionAttrs.addBoolean("disabled", option.Disabled)
+
+	encoder.encodeToken(xml.StartElement{
+		Name: xml.Name{Local: "option"},
+		Attr: optionAttrs.xmlAttr(),
+	})
+
+	if option.Text != "" {
+		encoder.encodeToken(xml.CharData(option.Text))
+	}
+
+	encoder.encodeToken(xml.EndElement{Name: xml.Name{Local: "option"}})
 }
