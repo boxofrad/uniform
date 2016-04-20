@@ -26,7 +26,7 @@ type TextInput struct {
 
 func (t TextInput) String() (string, error) {
 	buffer := bytes.NewBuffer(nil)
-	encoder := xml.NewEncoder(buffer)
+	encoder := errEncoder{encoder: xml.NewEncoder(buffer)}
 
 	attrs := make(attributes, 0)
 	attrs.add("type", "text")
@@ -59,17 +59,14 @@ func (t TextInput) String() (string, error) {
 		attrs.addString("data-"+key, value)
 	}
 
-	start := xml.StartElement{
+	encoder.encodeToken(xml.StartElement{
 		Name: xml.Name{Local: "input"},
 		Attr: attrs.xmlAttr(),
-	}
+	})
+	encoder.flush()
 
-	if err := encoder.EncodeToken(start); err != nil {
-		return "", err
-	}
-
-	if err := encoder.Flush(); err != nil {
-		return "", err
+	if encoder.err != nil {
+		return "", encoder.err
 	}
 
 	return buffer.String(), nil
