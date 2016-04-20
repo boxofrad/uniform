@@ -3,6 +3,7 @@ package uniform
 import (
 	"bytes"
 	"encoding/xml"
+	"html/template"
 )
 
 type SelectChild interface{}
@@ -49,6 +50,11 @@ func (s Select) String() (string, error) {
 	}
 
 	return buffer.String(), nil
+}
+
+func (t Select) HTML() (template.HTML, error) {
+	markup, err := t.String()
+	return template.HTML(markup), err
 }
 
 func encodeOptGroup(encoder errEncoder, optGroup OptGroup) {
