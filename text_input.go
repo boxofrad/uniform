@@ -78,16 +78,3 @@ func (t TextInput) HTML() (template.HTML, error) {
 	markup, err := t.String()
 	return template.HTML(markup), err
 }
-
-func buildAttr(values map[string]string) []xml.Attr {
-	attr := make([]xml.Attr, 0)
-
-	for name, value := range values {
-		attr = append(attr, xml.Attr{
-			Name:  xml.Name{Local: name},
-			Value: value,
-		})
-	}
-
-	return attr
-}
