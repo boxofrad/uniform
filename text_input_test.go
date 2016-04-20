@@ -16,6 +16,10 @@ func TestTextInput(t *testing.T) {
 			`<input type="text" value="Hello">`,
 		},
 		{
+			TextInput{Placeholder: "Alan Partridge"},
+			`<input type="text" placeholder="Alan Partridge">`,
+		},
+		{
 			TextInput{Value: "<script>"},
 			`<input type="text" value="&lt;script&gt;">`,
 		},
@@ -36,6 +40,14 @@ func TestTextInput(t *testing.T) {
 			`<input type="text" readonly="readonly">`,
 		},
 		{
+			TextInput{Required: true},
+			`<input type="text" required="required">`,
+		},
+		{
+			TextInput{AutoFocus: true},
+			`<input type="text" autofocus="autofocus">`,
+		},
+		{
 			TextInput{Class: []string{"form-input", "form-input-text"}},
 			`<input type="text" class="form-input form-input-text">`,
 		},
@@ -46,6 +58,30 @@ func TestTextInput(t *testing.T) {
 		{
 			TextInput{Size: 10},
 			`<input type="text" size="10">`,
+		},
+		{
+			TextInput{Data: map[string]string{"user-id": "123"}},
+			`<input type="text" data-user-id="123">`,
+		},
+		{
+			TextInput{Data: map[string]string{"empty": ""}},
+			`<input type="text">`,
+		},
+		{
+			TextInput{Dir: LTR},
+			`<input type="text" dir="ltr">`,
+		},
+		{
+			TextInput{Dir: RTL},
+			`<input type="text" dir="rtl">`,
+		},
+		{
+			TextInput{AutoComplete: On},
+			`<input type="text" autocomplete="on">`,
+		},
+		{
+			TextInput{AutoComplete: Off},
+			`<input type="text" autocomplete="off">`,
 		},
 	}
 

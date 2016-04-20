@@ -3,20 +3,25 @@ package uniform
 import (
 	"bytes"
 	"encoding/xml"
-	"fmt"
 	"html/template"
 	"strings"
 )
 
 type TextInput struct {
-	Value     string
-	Id        string
-	Name      string
-	Class     []string
-	Disabled  bool
-	ReadOnly  bool
-	MaxLength int
-	Size      int
+	Value        string
+	Placeholder  string
+	Id           string
+	Name         string
+	Class        []string
+	Disabled     bool
+	ReadOnly     bool
+	Required     bool
+	AutoFocus    bool
+	MaxLength    int
+	Size         int
+	Data         map[string]string
+	Dir          Dir
+	AutoComplete OnOff
 }
 
 func (t TextInput) String() (string, error) {
@@ -26,36 +31,32 @@ func (t TextInput) String() (string, error) {
 	attrs := make(attributes, 0)
 	attrs.add("type", "text")
 
-	if t.Value != "" {
-		attrs.add("value", t.Value)
-	}
+	attrs.addString("value", t.Value)
+	attrs.addString("placeholder", t.Placeholder)
+	attrs.addString("id", t.Id)
+	attrs.addString("name", t.Name)
+	attrs.addString("dir", string(t.Dir))
+	attrs.addString("autocomplete", string(t.AutoComplete))
 
-	if t.Id != "" {
-		attrs.add("id", t.Id)
-	}
-
-	if t.Name != "" {
-		attrs.add("name", t.Name)
-	}
-
-	if t.Disabled {
-		attrs.add("disabled", "disabled")
-	}
-
-	if t.ReadOnly {
-		attrs.add("readonly", "readonly")
-	}
+	attrs.addBoolean("disabled", t.Disabled)
+	attrs.addBoolean("readonly", t.ReadOnly)
+	attrs.addBoolean("required", t.Required)
+	attrs.addBoolean("autofocus", t.AutoFocus)
 
 	if len(t.Class) != 0 {
 		attrs.add("class", strings.Join(t.Class, " "))
 	}
 
 	if t.MaxLength != 0 {
-		attrs.add("maxlength", fmt.Sprintf("%d", t.MaxLength))
+		attrs.addInt("maxlength", t.MaxLength)
 	}
 
 	if t.Size != 0 {
-		attrs.add("size", fmt.Sprintf("%d", t.Size))
+		attrs.addInt("size", t.Size)
+	}
+
+	for key, value := range t.Data {
+		attrs.addString("data-"+key, value)
 	}
 
 	start := xml.StartElement{

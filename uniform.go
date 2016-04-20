@@ -1,6 +1,9 @@
 package uniform
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+)
 
 type attribute struct {
 	name, value string
@@ -10,6 +13,22 @@ type attributes []attribute
 
 func (a *attributes) add(name, value string) {
 	*a = append(*a, attribute{name, value})
+}
+
+func (a *attributes) addBoolean(name string, value bool) {
+	if value {
+		a.add(name, name)
+	}
+}
+
+func (a *attributes) addString(name, value string) {
+	if value != "" {
+		a.add(name, value)
+	}
+}
+
+func (a *attributes) addInt(name string, value int) {
+	a.add(name, fmt.Sprintf("%d", value))
 }
 
 func (a attributes) xmlAttr() []xml.Attr {
@@ -24,3 +43,17 @@ func (a attributes) xmlAttr() []xml.Attr {
 
 	return attr
 }
+
+type Dir string
+
+const (
+	LTR Dir = "ltr"
+	RTL Dir = "rtl"
+)
+
+type OnOff string
+
+const (
+	On  OnOff = "on"
+	Off OnOff = "off"
+)
